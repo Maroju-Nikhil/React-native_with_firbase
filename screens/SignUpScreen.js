@@ -26,6 +26,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { AuthContext } from "../components/context";
 import firebase from "../Config/firebase";
 import { useFonts } from "expo-font";
+import * as Speech  from 'expo';
 import { toastr_success } from "./toaster_success";
 import { toastr_danger } from "./toaster_danger";
 
@@ -205,7 +206,11 @@ const SignUpScreen = ({ navigation }) => {
           })
             toastr_success.showToast("Registered succesfully");
             signUp();
-            
+            Speech.speak('Welcome',{
+              language : 'en',
+              pitch : 1,
+              rate : 1
+            });
             console.log(data.issignedup);
             // console.ignoredYellowBox = ['Setting a timer'];
         });

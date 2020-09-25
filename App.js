@@ -7,6 +7,8 @@ import SignUpScreen from "./screens/SignUpScreen";
 import MainContentScreen from './screens/MainContentScreen';
 import { AuthContext } from "./components/context";
 import { Root } from "native-base";
+import firebase from "./Config/firebase";
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
 const RootScreensStack = createStackNavigator();
 const RootContentStack = createStackNavigator();
@@ -25,6 +27,7 @@ export default function App() {
       if(val == 0){
       setUserToken(null);
       setIsLoading(false);
+      firebase.auth().signOut()
       }
     },
     signUp: () => {
@@ -60,6 +63,10 @@ export default function App() {
           <RootScreensStack.Screen
             name="SignUpScreen"
             component={SignUpScreen}
+          />
+          <RootScreensStack.Screen 
+            name="ForgotPasswordScreen"
+            component={ForgotPasswordScreen}
           />
         </RootScreensStack.Navigator>
         </>

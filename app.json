@@ -8,7 +8,12 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "extra":{
+        "facebook":{
+          "appId":"1783459828473583"
+        }
+      }
     },
     "updates": {
       "fallbackToCacheTimeout": 0

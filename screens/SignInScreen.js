@@ -28,10 +28,12 @@ import { toastr_success_top } from "./toaster_success";
 import { toastr_danger } from "./toaster_danger";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { useFonts } from "expo-font";
+import FacebookLogin from "./Facebooklogin";
+import GoogleLogin from "./Googlelogin";
+import * as Speech from "expo-speech";
 
 const SignInScreen = ({ navigation }) => {
-
-  const [activity,setactivity] = useState(false)
+  const [activity, setactivity] = useState(false);
 
   let [fontsLoaded] = useFonts({
     Roboto: require("native-base/Fonts/Roboto.ttf"),
@@ -201,6 +203,11 @@ const SignInScreen = ({ navigation }) => {
 
   const [issignedin, setIsSignedIn] = useState(false);
 
+  const speak = () => {
+    var thingToSay = "Welcome ";
+    Speech.speak(thingToSay, { language: "en", rate: 0.7 });
+  };
+
   const signin1 = () => {
     if (data.email.trim().length == 0 || data.password.trim().length == 0)
       alert("Invalid Details");
@@ -209,22 +216,22 @@ const SignInScreen = ({ navigation }) => {
     else if (!data.isValidUser)
       toastr_danger.showToast("Email Address is invalid!");
     else {
-      setactivity(true)
-      console.log('activity',activity)
+      setactivity(true);
+      console.log("activity", activity);
 
-       firebase
+      firebase
         .auth()
         .signInWithEmailAndPassword(data.email, data.password)
         .then(function () {
           setIsSignedIn((val) => true);
-          
-          signIn()
-          
+          speak();
+          signIn();
         })
         .catch(function (error) {
           Alert.alert(
             "Failed",
-            "It looks like You Don't have account\nPlease try to Regsiter now"
+            "It looks like You Don't have account\nPlease try to Regsiter now" +
+              error
           );
           setIsSignedIn((val) => false);
           navigation.navigate("SignUpScreen");
@@ -274,7 +281,7 @@ const SignInScreen = ({ navigation }) => {
                 </Text>
                 {data.isValidUser ? (
                   <Item floatingLabel last rounded success>
-                    <Label style={styles.label}>Username</Label>
+                    <Label style={styles.label}>Email</Label>
                     <Input
                       placeholder="Your Email"
                       style={styles.textInput}
@@ -286,7 +293,7 @@ const SignInScreen = ({ navigation }) => {
                   </Item>
                 ) : (
                   <Item floatingLabel last rounded error>
-                    <Label style={styles.label}>Username</Label>
+                    <Label style={styles.label}>Email</Label>
                     <Input
                       placeholder="Your Email"
                       style={styles.textInput}
@@ -327,7 +334,8 @@ const SignInScreen = ({ navigation }) => {
                   success
                   onPress={() => {
                     signin1();
-                    if(issignedin) toastr_success_top.showToast("Log In Successful!");
+                    if (issignedin)
+                      toastr_success_top.showToast("Log In Successful!");
                     console.log(issignedin);
                   }}
                   style={styles.signIn}
@@ -338,6 +346,23 @@ const SignInScreen = ({ navigation }) => {
                     Sign In
                   </Text>
                 </Button>
+
+                <Item>
+                  <Button
+                    transparent
+                    style={[styles.signIn, { marginBottom: 5, marginTop: 0 }]}
+                    onPress={() => navigation.navigate("ForgotPasswordScreen")}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "sans-serif-condensed",
+                        fontSize: 17,
+                      }}
+                    >
+                      Forgot password?
+                    </Text>
+                  </Button>
+                </Item>
 
                 <Button
                   block
@@ -463,6 +488,12 @@ const SignInScreen = ({ navigation }) => {
                 </Button>
               </Form>
             )}
+
+            <View style={{ flexDirection: "row", marginBottom: "5%" }}>
+              <FacebookLogin />
+              <GoogleLogin />
+            </View>
+
             <Button
               block
               rounded
