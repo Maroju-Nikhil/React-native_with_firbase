@@ -1,0 +1,262 @@
+return (
+    <View style={globalStyles.container}>
+      <FlatList
+        data={reviews}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ReviewDetails', item)}
+          >
+            <Text style={globalStyles.titleText}>{item.title}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  )
+
+--------
+import { createStackNavigator } from 'react-navigation-stack'
+import { Home } from '../screens/home'
+import { ReviewDetails } from '../screens/reviewDetails'
+
+const screens = {
+  Home: {
+    screen: Home,
+    navigationOptions: {
+      title: 'GameZone',
+    },
+  },
+  ReviewDetails: {
+    screen: ReviewDetails,
+    navigationOptions: {
+      title: 'Review Details',
+    },
+  },
+}
+
+const HomeStack = createStackNavigator(screens, {
+  defaultNavigationOptions: {
+    headerTintColor: '#444',
+    headerStyle: {
+      backgroundColor: '#eee',
+      height: 70,
+    },
+  },
+})
+
+export default HomeStack
+
+
+<List>
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRc96kcLicYy25CFi7P_ocMargwSC_vjRxIMg&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Enosh Kumar</Text>
+                <Text note>How's your day? My day went well..</Text>
+              </Body>
+              <Right>
+                <Text note>3:43 pm</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Idur Bhasa</Text>
+                <Text note>Did you complete your work ?..</Text>
+              </Body>
+              <Right>
+                <Text note>5:45 pm</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQODjJzDNZkooTebpMO2HVyVIZJs2GeHUdllA&usqp=CAUL",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Harika</Text>
+                <Text note>
+                  The short one but hm.. speaks good english bro.
+                </Text>
+              </Body>
+              <Right>
+                <Text note>3:00 am</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSj8A36IZwHQFfLNrV9PuXoA9d68IPAIwungA&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Akhil</Text>
+                <Text note>
+                  Looking handsome but it looks like you much have anger..
+                </Text>
+              </Body>
+              <Right>
+                <Text note>12:03 am</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR31ej45MWVwNNHTncz88C0kOYMykdCnPTfDw&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Abijit</Text>
+                <Text note>
+                  keep going but try to keep your attitude down to your foot..
+                </Text>
+              </Body>
+              <Right>
+                <Text note>4:43 pm</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSjJBekKMdzDiywHq0HKWbcyCI6m7n31nkG3A&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Ariyana</Text>
+                <Text note>I think you are doing overaction there..</Text>
+              </Body>
+              <Right>
+                <Text note>8:09 pm</Text>
+              </Right>
+            </ListItem>
+
+            <ListItem avatar>
+              <Left>
+                <Thumbnail
+                  source={{
+                    uri:
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRy_mOmkk4pJVSF_IxRrBYrab1APVDD8mJEsQ&usqp=CAU",
+                  }}
+                />
+              </Left>
+              <Body>
+                <Text>Mehaboob dilse</Text>
+                <Text note>
+                  You are too good yaar but try to mingle up more..
+                </Text>
+              </Body>
+              <Right>
+                <Text note>9:46 pm</Text>
+              </Right>
+            </ListItem>
+          </List>
+
+
+          const [screens, setscreens] = useState({
+  //   tabStatus1: true,
+  //   tabStatus2: false,
+  //   tabStatus3: false,
+  //   tabStatus4: false,
+  //   tabStatus5: false,
+  // });
+  // const [index, setindex] = useState(0);
+
+  // const switchScreen = (Index) => {
+  //   setindex(Index);
+
+  //   switch (index) {
+  //     case 0:
+  //       setscreens({
+  //         tabStatus1: true,
+  //         tabStatus2: false,
+  //         tabStatus3: false,
+  //         tabStatus4: false,
+  //         tabStatus5: false,
+  //       });
+  //       // code block
+  //       break;
+  //     case 1:
+  //       setscreens({
+  //         tabStatus1: false,
+  //         tabStatus2: true,
+  //         tabStatus3: false,
+  //         tabStatus4: false,
+  //         tabStatus5: false,
+  //       });
+  //       // code block
+  //       break;
+  //     case 2:
+  //       // code block
+  //       setscreens({
+  //         tabStatus1: false,
+  //         tabStatus2: false,
+  //         tabStatus3: true,
+  //         tabStatus4: false,
+  //         tabStatus5: false,
+  //       });
+  //       break;
+  //     case 3:
+  //       setscreens({
+  //         tabStatus1: false,
+  //         tabStatus2: false,
+  //         tabStatus3: false,
+  //         tabStatus4: true,
+  //         tabStatus5: false,
+  //       });
+  //       // code block
+  //       break;
+  //     case 4:
+  //       setscreens({
+  //         tabStatus1: false,
+  //         tabStatus2: false,
+  //         tabStatus3: false,
+  //         tabStatus4: false,
+  //         tabStatus5: true,
+  //       });
+  //   }
+  // };
+
+  // // let user = Object.values(props.route.params).join('')
+  // let AppComponent = ListViewScreen;
+
+  // if (index == 0) {
+  //   // console.log(Object.values(props.route.params).join(''))
+  //   AppComponent = ListViewScreen;
+  // } else if (index == 1) AppComponent = GridViewScreen;
+  // else if (index == 2) AppComponent = CardViewScreen;
+  // else if (index == 3) AppComponent = ScrollViewScreen;
+  // else if (index == 4) AppComponent = ModalViewScreen;
+  // else {
+  //   AppComponent = ListViewScreen;
+  // }

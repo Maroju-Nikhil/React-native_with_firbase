@@ -56,32 +56,6 @@ export default class GridViewScreen extends Component {
       return (
         <Root>
         <Container>
-            <Header >
-            <Left style={{ flex: 1,}}><Text style={styles.headertext}>Contacts</Text></Left>
-            <Body style={{ flex: 1,}}></Body>
-            <Right style={{flex: 1,}}><Button
-              transparent
-              onPress={() =>
-                ActionSheet.show(
-                  {
-                    options: BUTTONS,
-                    cancelButtonIndex: CANCEL_INDEX,
-                    destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                    title: "More options",
-                  },
-                  (buttonIndex) => {
-                    signOut(buttonIndex)
-                  }
-                )
-              }
-            >
-              <Icon
-                name="more"
-                style={{ marginRight: 20 }}
-                style={styles.headertext}
-              />
-            </Button></Right>
-            </Header>
             <ScrollView>
             <Grid>
              <Row>

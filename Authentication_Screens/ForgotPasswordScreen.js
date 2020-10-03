@@ -23,8 +23,8 @@ import {
   Root,
 } from "native-base";
 import firebase from "../Config/firebase";
-import { toastr_success_top } from "./toaster_success";
-import { toastr_danger } from "./toaster_danger";
+import { toastr_success_top } from '../Toasters/toaster_success'
+import { toastr_danger } from "../Toasters/toaster_danger";
 import { useFonts } from "expo-font";
 
 const ForgotPasswordScreen = ({ navigation }) => {
@@ -70,8 +70,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
   return (
     <Root>
       <Container>
-        <Header />
-        <Content style={{ paddingHorizontal: 7 }}>
+        <Header style={{backgroundColor:'#eb8f34'}}/>
+        <Content style={{ paddingHorizontal: '7%' ,marginTop:'45%'}}>
           <Form>
             <Text style={styles.textSign}>
               <H1>Forgot Password</H1>

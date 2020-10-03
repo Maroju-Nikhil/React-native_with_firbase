@@ -1,12 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useContext ,useEffect} from "react";
 import {
     Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body,Root,Right ,ActionSheet
 } from "native-base";
-import { Image ,Alert} from 'react-native';
-import * as Font from "expo-font";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { Image ,Alert , ActivityIndicator , StyleSheet} from 'react-native';
+import { useFonts } from "expo-font";
 import { ScrollView } from "react-native-gesture-handler";
-import {AuthContext} from '../components/context';
+import {AuthContext , User} from '../components/context';
 
 var BUTTONS = [
   { text: "Sign Out", icon: "arrow-forward", iconColor: "#2c8ef4" },
@@ -15,27 +14,35 @@ var BUTTONS = [
 var DESTRUCTIVE_INDEX = 0;
 var CANCEL_INDEX = 1;
 
-// const { signOut } = useContext(AuthContext);
+export default function CardViewScreen () {
 
-export default class CardViewScreen extends Component {
+  const [user,setuser] = useContext(User)
 
-  static contextType = AuthContext;
+  let [fontsLoaded] = useFonts({
+    Roboto: require("native-base/Fonts/Roboto.ttf"),
+    Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+  }); 
 
-  constructor(props) {
-    super(props);
-    this.state = { loading: true ,clicked:BUTTONS[0]};
-  }
+    useEffect(() => {
+      try {
+        if (user.anonymoususer !== null)
+          toastr_success_top.showToast("Welcome " + user.anonymoususer.name);
+        else if (user.facebookuser !== null)
+          toastr_success_top.showToast(
+            "Welcome " + user.facebookuser.displayName
+          );
+        else if (user.googleuser !== null)
+          toastr_success_top.showToast("Welcome " + user.user.name);
+        else if (user.phone_user != null)
+          toastr_success_top.showToast("Welcome " + user.phone_user);
+        else if (user.new_user != null)
+          toastr_success_top.showToast("Welcome " + user.new_user.name);
+  
+        console.log(user);
+      } catch {}
+    }, []);
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      Roboto: require("native-base/Fonts/Roboto.ttf"),
-      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-    });
-    this.setState({ loading: false });
-  }
-
-  render() {
-    if (this.state.loading) {
+    if (!fontsLoaded) {
       return (
         <Root>
           <ActivityIndicator style={styles.container} size="large"/>
@@ -43,37 +50,9 @@ export default class CardViewScreen extends Component {
       );
     }
 
-    const { signOut } = this.context
-
     return (
       <Root>
         <Container>
-        <Header>
-        <Left style={{ flex: 1,}}><Text style={styles.headertext}>Instagram</Text></Left>
-          <Body style={{ flex: 1,}}></Body>
-          <Right style={{flex: 1,}}><Button
-              transparent
-              onPress={() =>
-                ActionSheet.show(
-                  {
-                    options: BUTTONS,
-                    cancelButtonIndex: CANCEL_INDEX,
-                    destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                    title: "More options",
-                  },
-                  (buttonIndex) => {
-                    signOut(buttonIndex)
-                  }
-                )
-              }
-            >
-              <Icon
-                name="more"
-                style={{ marginRight: 20 }}
-                style={styles.headertext}
-              />
-            </Button></Right>
-        </Header>
         <ScrollView>
         <Content>
           <Card style={styles.margin}>
@@ -171,14 +150,11 @@ export default class CardViewScreen extends Component {
               </Right>
             </CardItem>
           </Card>
-
-          
         </Content>
         </ScrollView>
       </Container>
       </Root>
     );
-  }
 }
 
 const styles = StyleSheet.create({

@@ -19,18 +19,20 @@ import {
   Icon,
   Button,
   H1,
+  H2,
   Toast,
   Root,
+  Body
 } from "native-base";
-import { AuthContext } from "../components/context";
+import { AuthContext, User } from "../components/context";
 import firebase from "../Config/firebase";
-import { toastr_success_top } from "./toaster_success";
-import { toastr_danger } from "./toaster_danger";
+import { toastr_success_top } from '../Toasters/toaster_success'
+import { toastr_danger } from '../Toasters/toaster_danger'
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import { useFonts } from "expo-font";
-import FacebookLogin from "./Facebooklogin";
-import GoogleLogin from "./Googlelogin";
-import * as Speech from "expo-speech";
+import FacebookLogin from './More_Logins/Facebooklogin';
+import GoogleLogin from './More_Logins/Googlelogin';
+import { StatusBar } from 'expo-status-bar';
 
 const SignInScreen = ({ navigation }) => {
   const [activity, setactivity] = useState(false);
@@ -55,18 +57,27 @@ const SignInScreen = ({ navigation }) => {
   const [isphone, setIsPhone] = useState(false);
 
   const handlephonechange = (value) => {
-    if (value.trim().length == 0 || value.trim().length < 10)
+    if (value.trim().length == 0 || value.trim().length < 10){
       setData({
         ...data,
         phone: "+91" + value,
         isvalidphone: false,
       });
+      setphone_user({
+        ...phone_user,
+        phone_no:value.trim()
+      })
+    }
     else if (value.trim().length == 10) {
       setData({
         ...data,
         phone: "+91" + value,
         isvalidphone: true,
       });
+      setphone_user({
+        ...phone_user,
+        phone_no:value.trim()
+      })
       Keyboard.dismiss();
     }
   };
@@ -86,22 +97,29 @@ const SignInScreen = ({ navigation }) => {
   const [otpinput, setotpinput] = useState(false);
 
   const handleValidPhone = (value) => {
-    if (value.trim().length < 10) {
+    if (value.trim().length < 10 && phone_user_name == null) {
       setData({
         ...data,
         phone: "+91" + value.trim(),
         isvalidphone: false,
       });
-      // alert(data.isvalidphone);
+      setphone_user({
+        ...phone_user,
+        phone_no:value.trim()
+      })
       setIsPhone(false);
-    } else if (value.trim().length == 10) {
+    } else if (value.trim().length == 10 && phone_user_name != null) {
       setData({
         ...data,
         phone: "+91" + value.trim(),
         isvalidphone: true,
       });
+      setphone_user({
+        ...phone_user,
+        phone_no:value.trim()
+      })
       setIsPhone(true);
-      // alert(data.isvalidphone)
+      
     }
   };
 
@@ -127,8 +145,37 @@ const SignInScreen = ({ navigation }) => {
   };
 
   const { signIn } = React.useContext(AuthContext);
+  const [user, setuser] = React.useContext(User);
 
-  const handleValidOTP = (value) => {
+  const getuser = (email, user_phone) => {
+    const db = firebase.firestore();
+    return db.collection("Student-App").onSnapshot((snapshot) => {
+      const users = [];
+      snapshot.forEach((doc) => {
+        users.push({
+          ...doc.data(),
+        });
+        if (email != null) {
+          if (doc.data().email.toString() == email.toString()) {
+            setuser({
+              ...user,
+              anonymoususer: doc.data(),
+            });
+            console.log(doc.data())
+          }
+        }
+
+        if (user_phone != null) {
+            setuser({
+              ...user,
+              phone_user : user_phone,
+            });
+        }
+      });
+    });
+  };
+
+  function handleValidOTP(value) {
     if (value.trim().length < 6) {
       setData({
         ...data,
@@ -142,7 +189,7 @@ const SignInScreen = ({ navigation }) => {
       });
       setCode(value.trim());
     }
-  };
+  }
 
   const textInputChange = (value) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -201,12 +248,10 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
-  const [issignedin, setIsSignedIn] = useState(false);
-
-  const speak = () => {
-    var thingToSay = "Welcome ";
-    Speech.speak(thingToSay, { language: "en", rate: 0.7 });
-  };
+  const [phone_user, setphone_user] = useState({
+      user_name:'',
+      phone_no:''
+  })
 
   const signin1 = () => {
     if (data.email.trim().length == 0 || data.password.trim().length == 0)
@@ -216,26 +261,20 @@ const SignInScreen = ({ navigation }) => {
     else if (!data.isValidUser)
       toastr_danger.showToast("Email Address is invalid!");
     else {
-      setactivity(true);
-      console.log("activity", activity);
-
       firebase
         .auth()
         .signInWithEmailAndPassword(data.email, data.password)
-        .then(function () {
-          setIsSignedIn((val) => true);
-          speak();
+        .then(function() {
+          getuser(data.email,null);
           signIn();
         })
         .catch(function (error) {
           Alert.alert(
             "Failed",
-            "It looks like You Don't have account\nPlease try to Regsiter now" +
-              error
+            "It looks like You Don't have account\nPlease try to Regsiter now"
           );
-          setIsSignedIn((val) => false);
+          console.log(error);
           navigation.navigate("SignUpScreen");
-          console.ignoredYellowBox = ["Setting a timer"];
         });
     }
   };
@@ -254,6 +293,8 @@ const SignInScreen = ({ navigation }) => {
         .signInWithCredential(credential)
         .then((result) => {
           console.log(result);
+          getuser(null,phone_user);
+          console.log(result)
           signIn();
         })
         .catch(function (error) {
@@ -263,21 +304,20 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
-  if (!fontsLoaded && !activity) {
+  if (!fontsLoaded) {
     return <ActivityIndicator style={styles.container} size="large" />;
   }
-
-  // if(fontsLoaded && activity)
   return (
     <Root>
       <View style={styles.container}>
+      <Header style={{backgroundColor:'#fff'}} />
         <Container>
-          <Header style={styles.header} />
-          <Content style={{ paddingHorizontal: 7 }}>
+        <StatusBar hidden={true}/>
+          <Content style={{ paddingHorizontal: '7%' }}>
             {!isphone ? (
               <Form key="key1">
                 <Text style={styles.textSign}>
-                  <H1>Login with Email</H1>
+                  <H1>Crimson Innovative Technologies</H1>
                 </Text>
                 {data.isValidUser ? (
                   <Item floatingLabel last rounded success>
@@ -334,9 +374,6 @@ const SignInScreen = ({ navigation }) => {
                   success
                   onPress={() => {
                     signin1();
-                    if (issignedin)
-                      toastr_success_top.showToast("Log In Successful!");
-                    console.log(issignedin);
                   }}
                   style={styles.signIn}
                 >
@@ -398,6 +435,17 @@ const SignInScreen = ({ navigation }) => {
                 />
 
                 <Item floatingLabel last rounded>
+                  <Label style={styles.label}>Your Name</Label>
+                  <Input
+                    style={styles.textInput}
+                    onChangeText={(value) => setphone_user({
+                      ...phone_user,
+                      user_name:value
+                    })}
+                  />
+                </Item>
+
+                <Item floatingLabel last rounded>
                   <Label style={styles.label}>Phone Number</Label>
                   <Input
                     style={styles.textInput}
@@ -457,8 +505,8 @@ const SignInScreen = ({ navigation }) => {
                     if (data.isvalidphone) {
                       setotpinput(true);
                       sendVerification();
-                    } else if (data.phone.length == 0)
-                      toastr_danger.showToast("Phone number can't be empty");
+                    } else if (phone_user_name == null)
+                      toastr_danger.showToast("Name can't be empty");
                     else toastr_danger.showToast("Invalid number");
                   }}
                   style={styles.signIn}

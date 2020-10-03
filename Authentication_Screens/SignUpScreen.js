@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -23,12 +23,11 @@ import {
   Root,
 } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
-import { AuthContext } from "../components/context";
+import { AuthContext , User } from "../components/context";
 import firebase from "../Config/firebase";
 import { useFonts } from "expo-font";
-import * as Speech  from 'expo';
-import { toastr_success } from "./toaster_success";
-import { toastr_danger } from "./toaster_danger";
+import { toastr_success } from '../Toasters/toaster_success'
+import { toastr_danger } from '../Toasters/toaster_danger';
 
 const SignUpScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -42,6 +41,8 @@ const SignUpScreen = ({ navigation }) => {
     pin: "",
     email: "",
     password: "",
+    phone:"+91",
+    isvalidphone:false,
     check_textInputChange: false,
     secureTextEntry: false,
     isValidUser: false,
@@ -81,6 +82,7 @@ const SignUpScreen = ({ navigation }) => {
     });
   };
   const { signUp } = React.useContext(AuthContext);
+  const [user,setuser] = useContext(User)
 
   const textInputChange = (value) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -124,18 +126,18 @@ const SignUpScreen = ({ navigation }) => {
     }
   };
 
-  const handleConfirmPasswordChange = (value) => {
-    if (data.confirm_password >= 8) {
+  const handlephoneChange = (value) => {
+    if (value.trim().length == 10) {
       setData({
         ...data,
-        confirm_password: value,
-        isConfirmPasword: true,
+        phone:value.trim(),
+        isvalidphone:true
       });
     } else {
       setData({
         ...data,
-        password: value,
-        isConfirmPasword: false,
+       phone:value.trim(),
+       isvalidphone:false
       });
     }
   };
@@ -144,13 +146,6 @@ const SignUpScreen = ({ navigation }) => {
     setData({
       ...data,
       secureTextEntry: !data.secureTextEntry,
-    });
-  };
-
-  const updateconfirmSecureTextEntry = () => {
-    setData({
-      ...data,
-      confirm_secureTextEntry: !data.confirm_secureTextEntry,
     });
   };
 
@@ -199,20 +194,23 @@ const SignUpScreen = ({ navigation }) => {
             DOB: data.chosenDate,
             gender: data.Pickervalue,
             address: data.address,
+            email:data.email,
+            phone:data.phone
           });
           setData({
             ...data,
             issignedup: true,
           })
+          setuser({
+            ...user,
+            new_user:{
+              name:data.name,
+              email:data.email,
+              phone:data.phone
+            }
+          })
             toastr_success.showToast("Registered succesfully");
             signUp();
-            Speech.speak('Welcome',{
-              language : 'en',
-              pitch : 1,
-              rate : 1
-            });
-            console.log(data.issignedup);
-            // console.ignoredYellowBox = ['Setting a timer'];
         });
     }
   };
@@ -224,8 +222,7 @@ const SignUpScreen = ({ navigation }) => {
     <Root>
       <View style={styles.container}>
         <Container>
-          <Header />
-          <Content style={{ paddingHorizontal: 8 }}>
+          <Content style={{ paddingHorizontal: '7%' ,marginTop:'10%'}}>
             <Form>
               <Text style={styles.textSign}>
                 <H1>Register Here</H1>
@@ -288,7 +285,7 @@ const SignUpScreen = ({ navigation }) => {
                 />
                 <Icon
                   name={data.isValidUser ? "checkmark-circle" : null}
-                  style={styles.icon}
+                  style={{ marginBottom: 10, marginRight: 5 ,color:'green' }}
                 />
               </Item>
 
@@ -307,7 +304,23 @@ const SignUpScreen = ({ navigation }) => {
                 />
                 <Icon
                   name={data.isValidpassword ? "checkmark-circle" : null}
-                  style={{ marginBottom: 10, marginRight: 5 }}
+                  style={{ marginBottom: 10, marginRight: 5 ,color:'green' }}
+                />
+              </Item>
+
+              <Item floatingLabel last rounded>
+                <Label style={styles.label}>Phone Number</Label>
+                <Input
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={(value) => handlephoneChange(value)}
+                  keyboardType={"numeric"}
+                  maxLength={10}
+                />
+                
+                <Icon
+                  name={data.isvalidphone ? "checkmark-circle" : null}
+                  style={{ marginBottom: 10, marginRight: 5 ,color:'green'}}
                 />
               </Item>
 

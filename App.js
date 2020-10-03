@@ -1,33 +1,45 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View,ActivityIndicator } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { StyleSheet, Text, View, ActivityIndicator} from "react-native";
+import { StatusBar } from 'expo-status-bar';
 import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import SignInScreen from "./screens/SignInScreen";
-import SignUpScreen from "./screens/SignUpScreen";
-import MainContentScreen from './screens/MainContentScreen';
-import { AuthContext } from "./components/context";
+import SignInScreen from './Authentication_Screens/SignInScreen';
+import SignUpScreen from './Authentication_Screens/SignUpScreen';
+import ForgotPasswordScreen from './Authentication_Screens/ForgotPasswordScreen';
+import MainContentScreen from "./screens/MainContentScreen";
+import DrawerContent from "./screens/DrawerContent";
+import { AuthContext, User } from "./components/context";
 import { Root } from "native-base";
 import firebase from "./Config/firebase";
-import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 
 const RootScreensStack = createStackNavigator();
-const RootContentStack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 export default function App() {
-
   const [userToken, setUserToken] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setuser] = useState({
+    googleuser: null,
+    facebookuser: null,
+    anonymoususer: null,
+    phone_user: null,
+    new_user:null
+  });
 
   const authContext = React.useMemo(() => ({
-    signIn : () => {
+    signIn: () => {
       setUserToken("nikhil");
       setIsLoading(false);
     },
-    signOut: (val) => {
-      if(val == 0){
-      setUserToken(null);
-      setIsLoading(false);
-      firebase.auth().signOut()
+    signOut: () => {
+      try{
+        setUserToken(null);
+        setIsLoading(false);
+        firebase.auth().signOut();
+      }
+      catch(error){
+        console.log(error)
       }
     },
     signUp: () => {
@@ -46,33 +58,41 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={authContext}>
-    <Root>
-    <NavigationContainer>
-      {userToken != null ? (
-        <RootContentStack.Navigator headerMode="none">
-          <RootContentStack.Screen name="MainContentScreen" component={MainContentScreen}/>
-        </RootContentStack.Navigator>
-      ) : (
-        <>
-        <RootScreensStack.Navigator headerMode="none">
-          <RootScreensStack.Screen
-            name="SignInScreen"
-            component={SignInScreen}
-            
-          />
-          <RootScreensStack.Screen
-            name="SignUpScreen"
-            component={SignUpScreen}
-          />
-          <RootScreensStack.Screen 
-            name="ForgotPasswordScreen"
-            component={ForgotPasswordScreen}
-          />
-        </RootScreensStack.Navigator>
-        </>
-      )}
-    </NavigationContainer>
-    </Root>
+      <User.Provider value={[user, setuser]}>
+        <Root>
+          <NavigationContainer>
+            {userToken != null ? (
+              <>
+              <Drawer.Navigator
+                initialRouteName="Home"
+                drawerContent={(props) => <DrawerContent {...props} />}
+              >
+                <Drawer.Screen name="HomeDrawer" component={MainContentScreen} />
+                
+              </Drawer.Navigator>
+              </>
+            ) : (
+              <>
+                <RootScreensStack.Navigator headerMode="none">
+                  <RootScreensStack.Screen
+                    name="SignInScreen"
+                    component={SignInScreen}
+                  />
+                  <RootScreensStack.Screen
+                    name="SignUpScreen"
+                    component={SignUpScreen}
+                  />
+                  <RootScreensStack.Screen
+                    name="ForgotPasswordScreen"
+                    component={ForgotPasswordScreen}
+                  />
+                  
+                </RootScreensStack.Navigator>
+              </>
+            )}
+          </NavigationContainer>
+        </Root>
+      </User.Provider>
     </AuthContext.Provider>
   );
 }

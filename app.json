@@ -7,20 +7,18 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
       "backgroundColor": "#ffffff",
-      "extra":{
-        "facebook":{
-          "appId":"1783459828473583"
+      "resizeMode": "contain",
+      "extra": {
+        "facebook": {
+          "appId": "1783459828473583"
         }
       }
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

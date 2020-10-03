@@ -1,7 +1,7 @@
 import React, { useState, useEffect,useContext } from 'react';
 import { StyleSheet, View, FlatList, Alert, BackHandler, ToastAndroid ,TouchableOpacity} from 'react-native';
-import GoalItem from './GoalItem';
-import GoalInput from './GoalInput'
+import GoalItem from './modal_content/GoalItem';
+import GoalInput from './modal_content/GoalInput'
 import {Container, Header , Left ,Right, Text ,Body , Icon , ActionSheet, Button, Root} from 'native-base';
 import {AuthContext} from '../components/context';
 
@@ -66,32 +66,6 @@ export default function ModalViewScreen() {
   return (
     <Root>
     <Container>
-    <Header>
-    <Left style={{ flex: 1}}><Text style={[styles.headertext,{marginRight:0}]}>Goal Adder</Text></Left>
-          <Body style={{ flex: 1,}}></Body>
-          <Right style={{flex: 1,}}><Button
-              transparent
-              onPress={() =>
-                ActionSheet.show(
-                  {
-                    options: BUTTONS,
-                    cancelButtonIndex: DESTRUCTIVE_INDEX,
-                    destructiveButtonIndex: CANCEL_INDEX,
-                    title: "More options",
-                  },
-                  (buttonIndex) => {
-                   signOut(buttonIndex)
-                  }
-                )
-              }
-            >
-              <Icon
-                name="more"
-                style={{ marginRight: 20 }}
-                style={styles.headertext}
-              />
-            </Button></Right>
-    </Header>
     <View style={styles.screen}>
       <TouchableOpacity onPress={() => setisaddmode(true)} style={{backgroundColor:'lightblue',padding:10,borderColor:'blue',borderWidth:1}}>
              <Text style={{textAlign:'center'}}> Add New Goal</Text>
